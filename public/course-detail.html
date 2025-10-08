@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Details - Skill Bridge</title>
+    <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌉 Skill Bridge</h1>
+            <div class="user-info">
+                <span id="userName">User</span>
+                <a href="index.html" class="logout">Back to Home</a>
+            </div>
+        </header>
+
+        <main>
+            <!-- Course Information -->
+            <section class="dashboard-section">
+                <div id="courseInfo" class="course-detail">
+                    <!-- Course info will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Discussion Section -->
+            <section class="dashboard-section">
+                <h3>💬 Discussion Forum</h3>
+                <p class="section-description">Ask questions, share insights, and discuss course content with other learners and the instructor.</p>
+                
+                <!-- Add Question Form -->
+                <div class="discussion-form-container">
+                    <div class="form-header">
+                        <h4>💭 Ask a Question</h4>
+                        <p>Share your thoughts or ask for clarification</p>
+                    </div>
+                    <form id="doubtForm">
+                        <div class="form-group">
+                            <textarea id="doubtMessage" placeholder="What would you like to discuss? Ask a question, share an insight, or start a conversation..." rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <span>🚀</span> Post Question
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Discussion Threads -->
+                <div class="discussion-header">
+                    <h4>📋 Discussion Threads</h4>
+                    <span id="threadCount" class="thread-count">0 discussions</span>
+                </div>
+                
+                <div id="doubtsList" class="discussion-container">
+                    <!-- Discussion threads will be loaded here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let currentCourse = null;
+        let allUsers = [];
+
+        // Check if user is logged in
+        window.onload = () => {
+            console.log('Page loaded, checking user authentication...');
+            const user = localStorage.getItem('user');
+            if (!user) {
+                console.log('No user found, redirecting to login');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = JSON.parse(user);
+            console.log('Current user:', currentUser);
+            document.getElementById('userName').textContent = currentUser.name;
+            
+            console.log('Loading course details and users...');
+            loadCourseDetails();
+            loadAllUsers();
+        };
+
+        // Get course ID from URL
+        function getCourseId() {
+            const path = window.location.pathname;
+            const parts = path.split('/');
+            return parseInt(parts[parts.length - 1]);
+        }
+
+        // Load course details
+        async function loadCourseDetails() {
+            const courseId = getCourseId();
+            console.log('Loading course with ID:', courseId);
+            
+            // Load all courses to find the current one
+            const response = await fetch('/api/courses');
+            const courses = await response.json();
+            console.log('Available courses:', courses);
+            
+            currentCourse = courses.find(c => c.id === courseId);
+            
+            if (!currentCourse) {
+                console.log('Course not found, creating placeholder course');
+                // Create a placeholder course if none exists
+                currentCourse = {
+                    id: courseId,
+                    title: 'Sample Course',
+                    description: 'This is a sample course for testing the discussion forum.',
+                    price: 99.99,
+                    mentorId: 1
+                };
+            }
+            
+            displayCourseInfo();
+            loadDoubts();
+        }
+
+        // Display course information
+        function displayCourseInfo() {
+            const courseInfo = document.getElementById('courseInfo');
+            console.log('Displaying course info for:', currentCourse);
+            courseInfo.innerHTML = `
+                <div class="course-detail-card">
+                    <h2>${currentCourse.title}</h2>
+                    <p class="course-description">${currentCourse.description}</p>
+                    <p class="course-price">Price: $${currentCourse.price}</p>
+                    <div class="course-actions">
+                        <button onclick="buyCourse(${currentCourse.id})" class="btn btn-primary">Buy Course</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load all users (for displaying names)
+        async function loadAllUsers() {
+            const response = await fetch('/api/admin/users');
+            allUsers = await response.json();
+        }
+
+        // Get user name by ID
+        function getUserName(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            return user ? user.name : 'Unknown User';
+        }
+
+        // Load doubts for the course
+        async function loadDoubts() {
+            const courseId = getCourseId();
+            const response = await fetch(`/api/courses/${courseId}/doubts`);
+            const doubts = await response.json();
+            
+            displayDoubts(doubts);
+        }
+
+        // Display doubts
+        function displayDoubts(doubts) {
+            const doubtsList = document.getElementById('doubtsList');
+            const threadCount = document.getElementById('threadCount');
+            
+            threadCount.textContent = `${doubts.length} discussion${doubts.length !== 1 ? 's' : ''}`;
+            
+            if (doubts.length === 0) {
+                doubtsList.innerHTML = `
+                    <div class="empty-discussion">
+                        <div class="empty-icon">💬</div>
+                        <h4>No discussions yet</h4>
+                        <p>Be the first to start a conversation! Ask a question or share your thoughts about this course.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            doubtsList.innerHTML = doubts.map(doubt => `
+                <div class="discussion-thread">
+                    <div class="thread-header">
+                        <div class="user-info">
+                            <div class="user-avatar">${getUserName(doubt.userId).charAt(0).toUpperCase()}</div>
+                            <div class="user-details">
+                                <h5>${getUserName(doubt.userId)}</h5>
+                                <span class="thread-time">${formatTime(doubt.timestamp)}</span>
+                            </div>
+                        </div>
+                        <div class="reply-count">${doubt.replies.length} ${doubt.replies.length === 1 ? 'reply' : 'replies'}</div>
+                    </div>
+                    
+                    <div class="thread-content">
+                        <p>${doubt.message}</p>
+                    </div>
+                    
+                    <!-- Replies Section -->
+                    <div class="replies-container">
+                        ${doubt.replies.length > 0 ? `
+                            <div class="replies-list">
+                                ${doubt.replies.map(reply => `
+                                    <div class="reply-item">
+                                        <div class="reply-header">
+                                            <div class="user-avatar small">${getUserName(reply.userId).charAt(0).toUpperCase()}</div>
+                                            <div class="reply-user-info">
+                                                <h6>${getUserName(reply.userId)}</h6>
+                                                <span class="reply-time">${formatTime(reply.timestamp)}</span>
+                                            </div>
+                                        </div>
+                                        <div class="reply-content">
+                                            <p>${reply.message}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Add Reply Form -->
+                        <form class="reply-form" onsubmit="addReply(event, ${doubt.id})">
+                            <div class="reply-input-group">
+                                <textarea name="replyMessage" placeholder="Write a reply..." rows="2" required></textarea>
+                                <button type="submit" class="btn btn-secondary btn-small">Reply</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Format timestamp
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString();
+        }
+
+        // Add a new doubt
+        document.getElementById('doubtForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const message = document.getElementById('doubtMessage').value;
+            const courseId = getCourseId();
+            
+            const response = await fetch(`/api/courses/${courseId}/doubts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: currentUser.id,
+                    message: message
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('doubtMessage').value = '';
+                loadDoubts(); // Reload doubts
+            } else {
+                alert('Failed to post doubt');
+            }
+        });
+
+        // Add a reply to a doubt
+        async function addReply(event, doubtId) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const message = form.replyMessage.value;
+            
+            const response = await fetch(`/api/doubts/${doubtId}/replies`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: currentUser.id,
+                    message: message
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                form.replyMessage.value = '';
+                loadDoubts(); // Reload doubts
+            } else {
+                alert('Failed to post reply');
+            }
+        }
+
+        // Buy course (simple version)
+        function buyCourse(courseId) {
+            alert('Course purchased! (This is a demo - no payment processing)');
+        }
+    </script>
+</body>
+</html>
+

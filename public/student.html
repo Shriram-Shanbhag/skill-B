@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Skill Bridge</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dashboard-container {
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        
+        .dashboard-header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            text-decoration: none;
+        }
+        
+        .logo i {
+            margin-right: 12px;
+            color: #4299e1;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4299e1, #9f7aea);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .logout-btn {
+            color: #e53e3e;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            color: #c53030;
+        }
+        
+        .dashboard-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .dashboard-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+        
+        .dashboard-subtitle {
+            color: #4a5568;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #4299e1, #9f7aea);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-right: 16px;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .card-content {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #4299e1;
+            border: 2px solid #4299e1;
+            padding: 10px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline:hover {
+            background: #4299e1;
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #4299e1;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #4a5568;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .courses-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .course-card {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .course-card:hover {
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .course-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .course-description {
+            color: #4a5568;
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .course-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4299e1;
+        }
+        
+        .course-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #fbbf24;
+        }
+        
+        .course-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #4a5568;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            color: #a0aec0;
+            margin-bottom: 16px;
+        }
+        
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .empty-state p {
+            margin-bottom: 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    Skill Bridge
+                </a>
+            <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <span class="user-name" id="userName">Student</span>
+                    <button class="btn-outline btn-small" onclick="editProfile()" style="margin-right: 10px;">
+                        <i class="fas fa-edit"></i>
+                        Edit Profile
+                    </button>
+                    <a href="#" class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <div class="dashboard-title">Welcome back!</div>
+            <div class="dashboard-subtitle">Continue your learning journey</div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="coursesEnrolled">0</div>
+                    <div class="stat-label">Courses Enrolled</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="sessionsBooked">0</div>
+                    <div class="stat-label">Sessions Booked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="hoursLearned">0</div>
+                    <div class="stat-label">Hours Learned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="certificatesEarned">0</div>
+                    <div class="stat-label">Certificates</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="card-title">Book a Session</div>
+                    </div>
+                    <div class="card-content">
+                        Schedule one-on-one sessions with expert mentors to get personalized guidance and support.
+                    </div>
+                    <button class="btn-primary" onclick="showBookSessionModal()">
+                        <i class="fas fa-plus"></i>
+                        Book Session
+                    </button>
+                </div>
+                
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="card-title">Browse Courses</div>
+                    </div>
+                    <div class="card-content">
+                        Explore our extensive library of courses across various domains and skill levels.
+                    </div>
+                    <button class="btn-primary" onclick="loadCourses()">
+                        <i class="fas fa-search"></i>
+                        Browse Courses
+                    </button>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="card-title">Ask a Question</div>
+                    </div>
+                    <div class="card-content">
+                        Get help from mentors and the community by posting your questions and doubts.
+                    </div>
+                    <button class="btn-primary" onclick="showAskQuestionModal()">
+                        <i class="fas fa-plus"></i>
+                        Ask Question
+                    </button>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="card-title">My Progress</div>
+                    </div>
+                    <div class="card-content">
+                        Track your learning progress, view achievements, and monitor your skill development.
+                    </div>
+                    <button class="btn-outline" onclick="showProgress()">
+                        <i class="fas fa-chart-bar"></i>
+                        View Progress
+                    </button>
+                </div>
+            </div>
+
+            <!-- Courses Section -->
+            <div class="courses-section">
+                <h2 class="section-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    Available Courses
+                </h2>
+                <div class="courses-grid" id="coursesGrid">
+                    <div class="empty-state">
+                        <i class="fas fa-book-open"></i>
+                        <h3>No courses available</h3>
+                        <p>Check back later for new courses or contact support.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Book Session Modal -->
+    <div id="bookSessionModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Book a Session</h3>
+                <span class="close" onclick="closeModal('bookSessionModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="bookSessionForm">
+                    <div class="form-group">
+                        <label for="sessionMentor">Select Mentor</label>
+                        <select id="sessionMentor" required>
+                            <option value="">Choose a mentor...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sessionSubject">Subject</label>
+                        <input type="text" id="sessionSubject" required placeholder="e.g., Web Development, Data Science">
+                    </div>
+                    <div class="form-group">
+                        <label for="sessionDate">Date</label>
+                        <input type="date" id="sessionDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sessionTime">Time</label>
+                        <input type="time" id="sessionTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sessionDescription">Description</label>
+                        <textarea id="sessionDescription" placeholder="Describe what you'd like to learn or discuss"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Book Session</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ask Question Modal -->
+    <div id="askQuestionModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ask a Question</h3>
+                <span class="close" onclick="closeModal('askQuestionModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="askQuestionForm">
+                    <div class="form-group">
+                        <label for="questionSubject">Subject</label>
+                        <input type="text" id="questionSubject" required placeholder="e.g., JavaScript, React, Python">
+                    </div>
+                    <div class="form-group">
+                        <label for="questionText">Your Question</label>
+                        <textarea id="questionText" required placeholder="Describe your question in detail"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Post Question</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <span class="close" onclick="closeModal('profileModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="profileName">Name</label>
+                        <input type="text" id="profileName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileEmail">Email</label>
+                        <input type="email" id="profileEmail" required>
+                    </div>
+                    <button type="button" class="btn-primary" onclick="updateProfile()">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user.id) {
+            window.location.href = 'login.html';
+        }
+
+        // Update user info
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Load courses
+                const coursesResponse = await fetch('/api/courses');
+                const coursesData = await coursesResponse.json();
+                
+                if (coursesData.success) {
+                    displayCourses(coursesData.courses);
+                }
+
+                // Load mentors for session booking
+                const mentorsResponse = await fetch('/api/users', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                if (mentorsResponse.ok) {
+                    const mentorsData = await mentorsResponse.json();
+                    if (mentorsData.success) {
+                        loadMentors(mentorsData.users);
+                    }
+                }
+
+                // Load user stats
+                updateStats();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        function loadMentors(users) {
+            const mentors = users.filter(u => u.type === 'mentor');
+            const mentorSelect = document.getElementById('sessionMentor');
+            
+            mentorSelect.innerHTML = '<option value="">Choose a mentor...</option>';
+            
+            mentors.forEach(mentor => {
+                const option = document.createElement('option');
+                option.value = mentor.id;
+                option.textContent = mentor.name;
+                mentorSelect.appendChild(option);
+            });
+        }
+
+        function displayCourses(courses) {
+            const coursesGrid = document.getElementById('coursesGrid');
+            
+            if (courses.length === 0) {
+                coursesGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-book-open"></i>
+                        <h3>No courses available</h3>
+                        <p>Check back later for new courses.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Filter out fake/incomplete courses (courses with very short titles or descriptions)
+            const realCourses = courses.filter(course => 
+                course.title && course.title.length > 3 && 
+                course.description && course.description.length > 10 &&
+                course.price > 0
+            );
+
+            if (realCourses.length === 0) {
+                coursesGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-book-open"></i>
+                        <h3>No real courses available</h3>
+                        <p>Mentors haven't created any courses yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            coursesGrid.innerHTML = realCourses.map(course => `
+                <div class="course-card">
+                    <div class="course-title">${course.title}</div>
+                    <div class="course-description">${course.description}</div>
+                    <div class="course-meta">
+                        <div class="course-price">$${course.price}</div>
+                        <div class="course-rating">
+                            <i class="fas fa-star"></i>
+                            <span>4.8</span>
+                        </div>
+                    </div>
+                    <div class="course-actions">
+                        <button class="btn-primary btn-small" onclick="enrollCourse(${course.id})">
+                            <i class="fas fa-plus"></i>
+                            Enroll
+                        </button>
+                        <button class="btn-outline btn-small" onclick="viewCourse(${course.id})">
+                            <i class="fas fa-eye"></i>
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            // Load real stats from server
+            fetch('/api/sessions', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const sessions = data.sessions || [];
+                    const acceptedSessions = sessions.filter(s => s.status === 'accepted').length;
+                    
+                    // Update stats with real data
+                    document.getElementById('coursesEnrolled').textContent = '0'; // Will be updated when courses are loaded
+                    document.getElementById('sessionsBooked').textContent = sessions.length;
+                    document.getElementById('hoursLearned').textContent = (acceptedSessions * 2).toString(); // Assuming 2 hours per session
+                    document.getElementById('certificatesEarned').textContent = '0'; // Will be calculated from real data
+                }
+            })
+            .catch(error => {
+                console.error('Error loading stats:', error);
+                // Fallback to 0 values
+                document.getElementById('coursesEnrolled').textContent = '0';
+                document.getElementById('sessionsBooked').textContent = '0';
+                document.getElementById('hoursLearned').textContent = '0';
+                document.getElementById('certificatesEarned').textContent = '0';
+            });
+        }
+
+        function showBookSessionModal() {
+            document.getElementById('bookSessionModal').style.display = 'block';
+        }
+
+        function showAskQuestionModal() {
+            document.getElementById('askQuestionModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function loadCourses() {
+            loadDashboardData();
+        }
+
+        function showProgress() {
+            alert('Progress tracking feature coming soon!');
+        }
+
+        function editProfile() {
+            // Get current user data
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+            
+            // Populate form with current data
+            document.getElementById('profileName').value = currentUser.name;
+            document.getElementById('profileEmail').value = currentUser.email;
+            
+            // Show profile modal
+            document.getElementById('profileModal').style.display = 'block';
+        }
+
+        async function updateProfile() {
+            const name = document.getElementById('profileName').value;
+            const email = document.getElementById('profileEmail').value;
+
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ name, email })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Profile updated successfully!');
+                    
+                    // Update stored user data
+                    const updatedUser = { ...JSON.parse(localStorage.getItem('user')), name, email };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    
+                    // Update display
+                    document.getElementById('userName').textContent = name;
+                    
+                    // Close modal
+                    document.getElementById('profileModal').style.display = 'none';
+                } else {
+                    alert('Error updating profile: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error updating profile. Please try again.');
+            }
+        }
+
+        async function enrollCourse(courseId) {
+            try {
+                const response = await fetch(`/api/courses/${courseId}/enroll`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Successfully enrolled in the course!');
+                    // Update the button to show enrolled state
+                    const button = event.target;
+                    button.innerHTML = '<i class="fas fa-check"></i> Enrolled';
+                    button.disabled = true;
+                    button.classList.remove('btn-primary');
+                    button.classList.add('btn-outline');
+                } else {
+                    alert('Error enrolling in course: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error enrolling in course. Please try again.');
+            }
+        }
+
+        function viewCourse(courseId) {
+            alert(`Viewing course ${courseId} details. This feature will be implemented soon!`);
+        }
+
+        // Book session form
+        document.getElementById('bookSessionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const sessionData = {
+                subject: document.getElementById('sessionSubject').value,
+                date: document.getElementById('sessionDate').value,
+                time: document.getElementById('sessionTime').value,
+                description: document.getElementById('sessionDescription').value,
+                mentorId: document.getElementById('sessionMentor').value // Get selected mentor
+            };
+
+            try {
+            const response = await fetch('/api/sessions', {
+                method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(sessionData)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                alert('Session booked successfully!');
+                    closeModal('bookSessionModal');
+                    document.getElementById('bookSessionForm').reset();
+            } else {
+                    alert('Error booking session: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error booking session. Please try again.');
+            }
+        });
+
+        // Ask question form
+        document.getElementById('askQuestionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const questionData = {
+                subject: document.getElementById('questionSubject').value,
+                question: document.getElementById('questionText').value
+            };
+
+            try {
+                const response = await fetch('/api/doubts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(questionData)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Question posted successfully!');
+                    closeModal('askQuestionModal');
+                    document.getElementById('askQuestionForm').reset();
+                } else {
+                    alert('Error posting question: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error posting question. Please try again.');
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        }
+
+        // Load data on page load
+        loadDashboardData();
+    </script>
+
+    <style>
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .close {
+            font-size: 24px;
+            font-weight: bold;
+            color: #a0aec0;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #2d3748;
+        }
+
+        .modal-body {
+            padding: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+    </style>
+</body>
+</html>
